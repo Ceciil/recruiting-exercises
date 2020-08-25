@@ -11,7 +11,7 @@ export type Warehouses = {
 
 
 export type Shipment = {
-  name: {
+  [name: string]: {
     [item: string]: number
   }
 }[]
