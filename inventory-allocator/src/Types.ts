@@ -3,15 +3,14 @@ export type Order = {
 };
 
 export type Warehouses = {
-  name: string,
+  name: string;
   inventory: {
     [item: string]: number;
-  }
-}[]
-
+  };
+}[];
 
 export type Shipment = {
   [name: string]: {
-    [item: string]: number
-  }
-}[]
+    [item: string]: number;
+  };
+}[];
