@@ -81,4 +81,111 @@ describe('InventoryAllocator', () => {
     const allocation = allocator.allocate(order, warehouses);
     expect(allocation).toEqual(expected);
   });
+
+  it('should allocate shipment from first warehouse when inventory in excess', () => {
+    const order: Order = { apple: 10 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10 } },
+      { name: 'bar', inventory: { apple: 10 } },
+      { name: 'baz', inventory: { apple: 10 } },
+    ];
+    const expected: Shipment = [
+      {
+        foo: { apple: 10 },
+      },
+    ];
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+  });
+
+  it('should allocate shipment from first two warehouse when inventory in excess', () => {
+    const order: Order = { apple: 19 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10 } },
+      { name: 'bar', inventory: { apple: 10 } },
+      { name: 'baz', inventory: { apple: 10 } },
+    ];
+    const expected: Shipment = [
+      {
+        foo: { apple: 10 },
+        bar: { apple: 9 },
+      },
+    ];
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+  });
+
+  it('should allocate shipment from first two warehouse when multiple inventory in excess', () => {
+    const order: Order = { apple: 19, pear: 9 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10, pear: 5 } },
+      { name: 'bar', inventory: { apple: 10, pear: 6 } },
+      { name: 'baz', inventory: { apple: 10, pear: 7 } },
+    ];
+    const expected: Shipment = [
+      {
+        foo: { apple: 10, pear: 5 },
+        bar: { apple: 9, pear: 4 },
+      },
+    ];
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+  });
+
+  it('should allocate nothing when there is a partial', () => {
+    const order: Order = { apple: 19, pear: 19 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10, pear: 5 } },
+      { name: 'bar', inventory: { apple: 10, pear: 6 } },
+      { name: 'baz', inventory: { apple: 10, pear: 7 } },
+    ];
+    const expected: Shipment = [];
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+  });
+
+  it('should mutate not mutate input order or warehouse when allocation successful', () => {
+    const order: Order = { apple: 19, pear: 9 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10, pear: 5 } },
+      { name: 'bar', inventory: { apple: 10, pear: 6 } },
+      { name: 'baz', inventory: { apple: 10, pear: 7 } },
+    ];
+    const expected: Shipment = [
+      {
+        foo: { apple: 10, pear: 5 },
+        bar: { apple: 9, pear: 4 },
+      },
+    ];
+
+    const orderClone = JSON.parse(JSON.stringify(order));
+    const warehousesClone = JSON.parse(JSON.stringify(warehouses));
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+    expect(orderClone).toEqual(order);
+    expect(warehousesClone).toEqual(warehouses);
+  });
+
+  it('should not mutate input order or warehouse when allocation not successful', () => {
+    const order: Order = { apple: 19, pear: 19 };
+    const warehouses: Warehouses = [
+      { name: 'foo', inventory: { apple: 10, pear: 5 } },
+      { name: 'bar', inventory: { apple: 10, pear: 6 } },
+      { name: 'baz', inventory: { apple: 10, pear: 7 } },
+    ];
+    const expected: Shipment = [];
+
+    const orderClone = JSON.parse(JSON.stringify(order));
+    const warehousesClone = JSON.parse(JSON.stringify(warehouses));
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+    expect(orderClone).toEqual(order);
+    expect(warehousesClone).toEqual(warehouses);
+  });
 });
