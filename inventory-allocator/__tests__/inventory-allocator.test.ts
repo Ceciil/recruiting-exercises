@@ -107,10 +107,8 @@ describe('InventoryAllocator', () => {
       { name: 'baz', inventory: { apple: 10 } },
     ];
     const expected: Shipment = [
-      {
-        foo: { apple: 10 },
-        bar: { apple: 9 },
-      },
+      { bar: { apple: 9 } },
+      { foo: { apple: 10 } },
     ];
 
     const allocation = allocator.allocate(order, warehouses);
@@ -126,8 +124,10 @@ describe('InventoryAllocator', () => {
     ];
     const expected: Shipment = [
       {
-        foo: { apple: 10, pear: 5 },
         bar: { apple: 9, pear: 4 },
+      },
+      {
+        foo: { apple: 10, pear: 5 },
       },
     ];
 
@@ -157,9 +157,11 @@ describe('InventoryAllocator', () => {
     ];
     const expected: Shipment = [
       {
-        foo: { apple: 10, pear: 5 },
         bar: { apple: 9, pear: 4 },
       },
+      {
+        foo: { apple: 10, pear: 5 },
+      }
     ];
 
     const orderClone = JSON.parse(JSON.stringify(order));
@@ -188,4 +190,24 @@ describe('InventoryAllocator', () => {
     expect(orderClone).toEqual(order);
     expect(warehousesClone).toEqual(warehouses);
   });
+
+  it('should return shipments ordered alphabetically by warhouse name', () => {
+    const order: Order = { apple: 4, pear: 4 };
+    const warehouses: Warehouses = [
+      { name: 'a', inventory: { apple: 1, pear: 1 } },
+      { name: 'c', inventory: { apple: 1, pear: 1 } },
+      { name: 'aab', inventory: { apple: 1, pear: 1 } },
+      { name: 'aac', inventory: { apple: 1, pear: 2 } },
+    ];
+    const expected: Shipment = [
+      {a: { apple: 1, pear: 1 }  },
+      {aab: { apple: 1, pear: 1 }  },
+      {aac: { apple: 1, pear: 1 }  },
+      {c: { apple: 1, pear: 1 }  },
+    ];
+
+    const allocation = allocator.allocate(order, warehouses);
+    expect(allocation).toEqual(expected);
+  });
+  
 });
