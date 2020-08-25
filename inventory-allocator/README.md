@@ -1,4 +1,16 @@
+### Installation
 
+Install dependencies before running any tests!
+
+```bash
+npm install
+```
+
+### Running Tests
+
+```bash
+npm test
+```
 
 ### Problem
 
