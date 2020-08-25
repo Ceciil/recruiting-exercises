@@ -76,7 +76,7 @@ describe('InventoryAllocator', () => {
       { name: 'foo', inventory: { apple: 5 } },
       { name: 'bar', inventory: { apple: 6 } },
     ];
-    const expected: Shipment = [{ foo: { apple: 5 } }, { bar: { apple: 6 } }];
+    const expected: Shipment = [{ bar: { apple: 5 } }, { foo: { apple: 5 } }];
 
     const allocation = allocator.allocate(order, warehouses);
     expect(allocation).toEqual(expected);
@@ -209,5 +209,5 @@ describe('InventoryAllocator', () => {
     const allocation = allocator.allocate(order, warehouses);
     expect(allocation).toEqual(expected);
   });
-  
+
 });
