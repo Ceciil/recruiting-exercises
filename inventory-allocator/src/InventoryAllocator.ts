@@ -15,7 +15,8 @@ export class InventoryAllocator {
     for (let [item, count] of Object.entries(order)) {
       for (let { name, inventory } of warehouses) {
         const fulfilledItem = fulfilled[item] || 0
-        if (fulfilledItem <= count) {
+        if (!inventory[item]) break;
+        if (fulfilledItem < count) {
           const needsFulfilled = count - fulfilledItem;
           const canBeFulfilled = Math.min(inventory[item], needsFulfilled);
           if (canBeFulfilled > 0) {
